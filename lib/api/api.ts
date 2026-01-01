@@ -6,3 +6,13 @@ export const nextServer = axios.create({
     "/api",
   withCredentials: true,
 });
+
+export interface ApiError {
+  message: string;
+  response?: {
+    data?: {
+      message?: string;
+    };
+    status?: number;
+  };
+}
