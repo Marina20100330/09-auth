@@ -1,3 +1,4 @@
+
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { useDebounce } from "use-debounce";
@@ -10,7 +11,7 @@ import Pagination from "@/components/Pagination/Pagination";
 import Loading from "@/app/loading";
 import NoteList from "@/components/NoteList/NoteList";
 import { fetchNotes } from "@/lib/api/clientApi";
-import { Note } from "@/types/note"; 
+import { Note, CategoryNoAll } from "@/types/note";
 import css from "./Notesclient.module.css";
 
 interface NotesResponse {
@@ -19,24 +20,31 @@ interface NotesResponse {
 }
 
 interface NotesClientProps {
-  initialTag: string | undefined;
+  tag?: CategoryNoAll;
 }
 
+const PER_PAGE = 8; 
+
 export default function NotesClient({
-  initialTag,
+  tag: initialTag,
 }: NotesClientProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebounce(query, 500);
-  const [tag, setTag] = useState(initialTag);
+  const [currentTag, setCurrentTag] = useState(initialTag);
 
   useEffect(() => {
-    setTag(initialTag);
+    setCurrentTag(initialTag);
     setCurrentPage(1);
   }, [initialTag]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedQuery, currentTag]);
+
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery<NotesResponse>({
-    queryKey: ["notes", debouncedQuery, currentPage, tag],
-    queryFn: () => fetchNotes(debouncedQuery, currentPage, tag),
+    queryKey: ["notes", debouncedQuery, currentPage, currentTag ?? null],
+    queryFn: () => fetchNotes(debouncedQuery || "", currentPage, currentTag, PER_PAGE),
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
   });
@@ -46,7 +54,6 @@ export default function NotesClient({
 
   const handleChange = useCallback((val: string) => {
     setQuery(val);
-    setCurrentPage(1);
   }, []);
 
   return (

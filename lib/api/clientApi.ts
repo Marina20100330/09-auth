@@ -1,6 +1,14 @@
-import { User } from "@/types/user";
-import { nextServer } from "./api";
-import { NewNoteData, Note } from "@/types/note";
+
+
+import axios from "axios";
+import type { User } from "@/types/user"; 
+import type { NewNoteData, Note, Category } from "@/types/note";
+
+
+export const nextServer = axios.create({ 
+  baseURL: (process.env.NEXT_PUBLIC_API_URL || "") + "/api",
+  withCredentials: true, 
+});
 
 export interface NotesHttpResponse {
   notes: Note[];
@@ -54,13 +62,16 @@ export const checkSession = async () => {
 export const fetchNotes = async (
   search: string,
   page: number,
-  tag: string | undefined
+  tag: string | undefined, 
+  perPage: number = 8, 
+  sortBy?: "created" | "updated"
 ): Promise<NotesHttpResponse> => {
-  const params = {
-    ...(search && { search }),
-    tag,
+  const params: Record<string, string | number> = {
+    ...(search && { search }), 
+    ...(tag && { tag }),
     page,
-    perPage: 8,
+    perPage,
+    ...(sortBy && { sortBy }),
   };
 
   const response = await nextServer.get<NotesHttpResponse>("/notes", {
@@ -75,11 +86,13 @@ export const createNote = async (note: NewNoteData): Promise<Note> => {
 };
 
 export const deleteNote = async (id: string): Promise<Note> => {
+  
   const response = await nextServer.delete<Note>(`/notes/${id}`);
   return response.data;
 };
 
 export const fetchNoteById = async (id: string): Promise<Note> => {
+ 
   const response = await nextServer.get<Note>(`/notes/${id}`);
   return response.data;
 };
