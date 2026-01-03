@@ -3,40 +3,32 @@ import { fetchNotes } from "@/lib/api/serverApi";
 import type { Metadata } from "next";
 import type { CategoryNoAll } from "@/types/note";
 
-type Props = { params: Promise<{ slug?: string[] }> };
+import { QueryClient, HydrationBoundary, dehydrate } from "@tanstack/react-query";
 
-const toCategoryNoAll = (x: string | undefined): CategoryNoAll | undefined => {
-  if (!x || x === "All") return undefined;
-  return x as CategoryNoAll;
-};
+export default async function Page({ params }: { params: { slug: string[] } }) {
+ 
+  const tagNote = params.slug[0] === "all" ? undefined : (params.slug[0] as CategoryNoAll);
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const tag = slug?.[0] ?? "All";
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["notes", "", 1, tagNote], 
+    queryFn: () => fetchNotes("", 1, tagNote),
+  });
+
+  return (
+      <HydrationBoundary state={dehydrate(queryClient)}>
+      {}
+      <NotesClient initialTag={tagNote} />
+    </HydrationBoundary>
+  );
+}
+
+
+export async function generateMetadata({ params }: { params: { slug: string[] } }): Promise<Metadata> {
+  const category = params.slug[0];
   return {
-    title: `${tag} notes`,
-    description: `List of your notes filtered by tag ${tag}.`,
-    openGraph: {
-      title: `${tag} notes`,
-      description: `List of your notes filtered by tag ${tag}.`,
-      url: `https://your-site/notes/filter/${tag}`,
-      images: [
-        {
-          url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
-          width: 1200,
-          height: 630,
-          alt: `${tag} notes`,
-        },
-      ],
-    },
+    title: `Notes: ${category} | NoteHub`,
   };
 }
 
-export default async function NotesByTagPage({ params }: Props) {
-  const { slug } = await params;
-
-  const tagNote = toCategoryNoAll(slug?.[0]);
-  const initialData = await fetchNotes("", 1, tagNote);
-
-  return <NotesClient initialData={initialData} initialTag={tagNote} />;
-}
