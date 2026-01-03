@@ -10,16 +10,19 @@ import Pagination from "@/components/Pagination/Pagination";
 import Loading from "@/app/loading";
 import NoteList from "@/components/NoteList/NoteList";
 import { fetchNotes } from "@/lib/api/clientApi";
-import { Note } from "@/types/note";
+import { Note } from "@/types/note"; 
 import css from "./Notesclient.module.css";
 
+interface NotesResponse {
+  notes: Note[];
+  totalPages: number;
+}
+
 interface NotesClientProps {
-  initialData: { notes: Note[]; totalPages: number };
   initialTag: string | undefined;
 }
 
 export default function NotesClient({
-  initialData,
   initialTag,
 }: NotesClientProps) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,16 +34,15 @@ export default function NotesClient({
     setTag(initialTag);
     setCurrentPage(1);
   }, [initialTag]);
-
-  const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
+  const { data, isError, isLoading, isSuccess, isFetching } = useQuery<NotesResponse>({
     queryKey: ["notes", debouncedQuery, currentPage, tag],
     queryFn: () => fetchNotes(debouncedQuery, currentPage, tag),
     placeholderData: keepPreviousData,
-    initialData,
-    refetchOnMount: false,
+    staleTime: 1000 * 60 * 5,
   });
 
   const totalPages = data?.totalPages ?? 0;
+  const notes = data?.notes ?? [];
 
   const handleChange = useCallback((val: string) => {
     setQuery(val);
@@ -56,12 +58,12 @@ export default function NotesClient({
         </Link>
       </div>
 
-      {isLoading && !data?.notes && <Loading />}
+      {isLoading && !data && <Loading />}
       {isError && <ErrorMessage />}
 
-      {isSuccess && data?.notes.length > 0 && (
+      {isSuccess && notes.length > 0 && (
         <div className={css.noteListWrapper}>
-          <NoteList notes={data.notes} />
+          <NoteList notes={notes} />
 
           {isFetching && !isLoading && (
             <div className={css.overlayLoader}>
