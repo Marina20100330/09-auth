@@ -1,7 +1,10 @@
+
+
 import Link from "next/link";
 import Image from "next/image";
 import css from "./ProfilePage.module.css";
-import { getServerMe } from "@/lib/api/serverApi";
+
+import { getMe } from "@/lib/api/serverApi"; 
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,8 +14,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Profile Page | NoteHub",
     description: "View and manage your profile information.",
-    url: "https://09-auth-mu-nine.vercel.app/",
-    siteName: "MyApp",
+    url: "https://09-auth-mu-nine.vercel.app/", 
+    siteName: "NoteHub",
     images: [
       {
         url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
@@ -23,8 +26,46 @@ export const metadata: Metadata = {
     ],
   },
 };
+
 export default async function Profile() {
-  const user = await getServerMe();
+  let user = null; 
+  let error = null;
+
+  try {
+   
+    user = await getMe(); 
+  } catch (err) {
+    console.error("Failed to fetch user profile:", err);
+    error = "Failed to load user profile. Please try again or log in.";
+    
+  }
+
+  if (error) {
+    return (
+      <main className={css.mainContent}>
+        <div className={css.profileCard}>
+          <h1 className={css.formTitle}>Profile Page</h1>
+          <p className={css.error}>{error}</p>
+          <Link href="/sign-in" className={css.editProfileButton}>
+            Go to Login
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  if (!user) {
+  
+    return (
+      <main className={css.mainContent}>
+        <div className={css.profileCard}>
+          <h1 className={css.formTitle}>Profile Page</h1>
+          <p>Loading user data or user not found...</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className={css.mainContent}>
       <div className={css.profileCard}>
@@ -35,8 +76,9 @@ export default async function Profile() {
           </Link>
         </div>
         <div className={css.avatarWrapper}>
+          {}
           <Image
-            src={user.avatar}
+            src={user.avatar || "/default-avatar.png"}
             alt="User Avatar"
             width={120}
             height={120}
