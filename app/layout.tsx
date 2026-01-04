@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     title: "Welcome to NoteHub",
     description:
       "Quickly organize and access your personal notes anytime, anywhere.",
-    // ОБНОВИЛ URL
+   
     url: "https://09-auth-brown-eight.vercel.app/",
     images: [
       {
@@ -44,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* ИСПРАВЛЕНО: roboto.className применит шрифт ко всем элементам */}
+      {}
       <body className={roboto.className}>
         <TanStackProvider>
           <AuthProvider>
