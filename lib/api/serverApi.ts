@@ -15,64 +15,51 @@ export interface FetchNotesParams {
   perPage?: number;
 }
 
-
-export const getMe = async (): Promise<User> => {
-  const cookieStore = await cookies();
-  const allCookies = cookieStore.toString(); 
-
+export const getMe = async (): Promise<User | null> => {
   try {
+    const cookieStore = await cookies();
+    const allCookies = cookieStore.toString(); 
+
+    if (!allCookies) return null;
+
     const { data } = await axiosInstance.get<User>("/auth/session", {
-      headers: {
-        Cookie: allCookies, 
-      },
+      headers: { Cookie: allCookies },
     });
     return data;
   } catch (error) {
-    console.error("Server getMe error:", error);
-    throw error;
+    return null; 
   }
 };
 
-
 export async function fetchNotes(params: FetchNotesParams): Promise<NotesHttpResponse> {
-  const cookieStore = await cookies();
-  const allCookies = cookieStore.toString();
-
   try {
+    const cookieStore = await cookies();
+    const allCookies = cookieStore.toString();
+
+    if (!allCookies) return { notes: [], totalPages: 0 };
+
     const res = await axiosInstance.get<NotesHttpResponse>("/notes", {
       params,
-      headers: {
-        Cookie: allCookies,
-      },
+      headers: { Cookie: allCookies },
     });
     return res.data ?? { notes: [], totalPages: 0 };
   } catch (error) {
-    console.error("Server fetchNotes error:", error);
     return { notes: [], totalPages: 0 };
   }
 }
 
+export const fetchNoteById = async (id: string): Promise<Note | null> => {
+  try {
+    const cookieStore = await cookies();
+    const allCookies = cookieStore.toString();
+    
+    if (!allCookies) return null;
 
-export const fetchNoteById = async (id: string): Promise<Note> => {
-  const cookieStore = await cookies();
-  const allCookies = cookieStore.toString();
-  
-  const response = await axiosInstance.get<Note>(`/notes/${id}`, {
-    headers: { 
-        Cookie: allCookies 
-    },
-  });
-  return response.data;
-};
-
-export const createNote = async (note: NewNoteData): Promise<Note> => {
-  const cookieStore = await cookies();
-  const allCookies = cookieStore.toString();
-  
-  const response = await axiosInstance.post<Note>("/notes", note, {
-    headers: { 
-        Cookie: allCookies 
-    },
-  });
-  return response.data;
+    const response = await axiosInstance.get<Note>(`/notes/${id}`, {
+      headers: { Cookie: allCookies },
+    });
+    return response.data;
+  } catch (error) {
+    return null;
+  }
 };
