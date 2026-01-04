@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export default async function proxy(request: NextRequest) {
  
-  const session = request.cookies.get("accessToken")?.value;
+  const session = request.cookies.get("session")?.value;
   const { pathname } = request.nextUrl;
 
  
