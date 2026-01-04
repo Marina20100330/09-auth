@@ -16,13 +16,10 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: "Welcome to NoteHub",
-  description:
-    "NoteHub helps you quickly organize and access your personal notes anytime, anywhere.",
+  description: "NoteHub helps you quickly organize and access your personal notes anytime, anywhere.",
   openGraph: {
     title: "Welcome to NoteHub",
-    description:
-      "Quickly organize and access your personal notes anytime, anywhere.",
-   
+    description: "Quickly organize and access your personal notes anytime, anywhere.",
     url: "https://09-auth-brown-eight.vercel.app/",
     images: [
       {
@@ -44,17 +41,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {}
       <body className={roboto.className}>
         <TanStackProvider>
           <AuthProvider>
             <Header />
-
             <main>
               {children}
               {modal}
             </main>
-
             <Footer />
           </AuthProvider>
         </TanStackProvider>
