@@ -2,15 +2,16 @@ import axios from "axios";
 import type { User } from "@/types/user"; 
 import type { NewNoteData, Note } from "@/types/note";
 
-
 export const nextServer = axios.create({ 
   baseURL: "/api",
   withCredentials: true, 
 });
+
 export interface NotesHttpResponse {
   notes: Note[];
   totalPages: number;
 }
+
 export interface RegisterRequest {
   email: string;
   password: string;
@@ -35,10 +36,13 @@ export const logout = async (): Promise<void> => {
   await nextServer.post("/auth/logout");
 };
 
-
 export const checkSession = async (): Promise<User | null> => {
-  const res = await nextServer.get<User>("/auth/session");
-  return res.data; 
+  try {
+    const res = await nextServer.get<User>("/auth/session");
+    return res.data;
+  } catch (error) {
+    return null;
+  }
 };
 
 export const getMe = async (): Promise<User> => {

@@ -17,9 +17,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       try {
         const userData = await checkSession();
         
-        
         if (userData && userData.email) {
-          setUser(userData); 
+          setUser(userData);
         } else {
           clearIsAuthenticated();
         }
