@@ -12,7 +12,6 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Profile Page | NoteHub",
     description: "View and manage your profile information.",
-  
     url: "https://09-auth-five-fawn.vercel.app/profile", 
     siteName: "NoteHub",
     images: [
@@ -42,7 +41,7 @@ export default async function Profile() {
       <main className={css.mainContent}>
         <div className={css.profileCard}>
           <h1 className={css.formTitle}>Profile Page</h1>
-          <p className={css.error}>{error || "User not found"}</p>
+          <p className={css.error}>{error || "User not found. Please log in."}</p>
           <Link href="/sign-in" className={css.editProfileButton}>
             Go to Login
           </Link>
@@ -62,7 +61,6 @@ export default async function Profile() {
         </div>
         <div className={css.avatarWrapper}>
           <Image
-          
             src={user.avatar && user.avatar.startsWith('http') ? user.avatar : "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg"}
             alt="User Avatar"
             width={120}

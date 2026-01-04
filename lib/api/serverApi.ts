@@ -18,9 +18,9 @@ export interface FetchNotesParams {
 export const getMe = async (): Promise<User | null> => {
   try {
     const cookieStore = await cookies();
-    const allCookies = cookieStore.toString(); 
+    const allCookies = cookieStore.toString();
 
-    if (!allCookies) return null;
+    if (!allCookies) return null; 
 
     const { data } = await axiosInstance.get<User>("/auth/session", {
       headers: { Cookie: allCookies },
@@ -30,6 +30,7 @@ export const getMe = async (): Promise<User | null> => {
     return null; 
   }
 };
+
 
 export async function fetchNotes(params: FetchNotesParams): Promise<NotesHttpResponse> {
   try {
