@@ -1,9 +1,7 @@
-
-
 import { cookies } from "next/headers";
 import type { Note, Category, NewNoteData } from "../../types/note"; 
 import type { User } from "../../types/user"; 
-import { nextServer as axiosInstance } from "./clientApi";
+import { nextServer as axiosInstance } from "./api"; 
 
 export interface NotesHttpResponse {
   notes: Note[];
@@ -12,23 +10,24 @@ export interface NotesHttpResponse {
 export interface FetchNotesParams {
   search?: string;
   page?: number;
-  tag?: Exclude<Category, "All">;
+  tag?: string;
   perPage?: number;
-  sortBy?: "created" | "updated";
 }
+
 
 export const getMe = async (): Promise<User> => {
   const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get('session')?.value;
+ 
+  const token = cookieStore.get('accessToken')?.value;
 
-  if (!sessionCookie) {
-    throw new Error('No session found for server-side getMe');
+  if (!token) {
+    throw new Error('No token found');
   }
 
   try {
-    const { data } = await axiosInstance.get<User>("/auth/me", {
+    const { data } = await axiosInstance.get<User>("/auth/session", {
       headers: {
-        Cookie: `session=${sessionCookie}`,
+        Cookie: `accessToken=${token}`, 
       },
     });
     return data;
@@ -38,19 +37,17 @@ export const getMe = async (): Promise<User> => {
   }
 };
 
+
 export async function fetchNotes(params: FetchNotesParams): Promise<NotesHttpResponse> {
   const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get('session')?.value;
-
-  if (!sessionCookie) {
-    return { notes: [], totalPages: 0 };
-  }
+  const token = cookieStore.get('accessToken')?.value;
 
   try {
     const res = await axiosInstance.get<NotesHttpResponse>('/notes', {
       params,
       headers: {
-        Cookie: `session=${sessionCookie}`,
+    
+        Cookie: token ? `accessToken=${token}` : "", 
       },
     });
     return res.data ?? { notes: [], totalPages: 0 };
@@ -60,32 +57,15 @@ export async function fetchNotes(params: FetchNotesParams): Promise<NotesHttpRes
   }
 }
 
-export const createNote = async (note: NewNoteData): Promise<Note> => {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get('session')?.value;
-  if (!sessionCookie) throw new Error('No session for createNote');
-  const response = await axiosInstance.post<Note>("/notes", note, {
-    headers: { Cookie: `session=${sessionCookie}` },
-  });
-  return response.data;
-};
-
-export const deleteNote = async (id: string): Promise<Note> => {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get('session')?.value;
-  if (!sessionCookie) throw new Error('No session for deleteNote');
-  const response = await axiosInstance.delete<Note>(`/notes/${id}`, {
-    headers: { Cookie: `session=${sessionCookie}` },
-  });
-  return response.data;
-};
 
 export const fetchNoteById = async (id: string): Promise<Note> => {
   const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get('session')?.value;
-  if (!sessionCookie) throw new Error('No session for fetchNoteById');
+  const token = cookieStore.get('accessToken')?.value;
+  
   const response = await axiosInstance.get<Note>(`/notes/${id}`, {
-    headers: { Cookie: `session=${sessionCookie}` },
+    headers: { 
+        Cookie: token ? `accessToken=${token}` : "" 
+    },
   });
   return response.data;
 };
