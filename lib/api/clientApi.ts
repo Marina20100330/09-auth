@@ -7,12 +7,10 @@ export const nextServer = axios.create({
   baseURL: "/api",
   withCredentials: true, 
 });
-
 export interface NotesHttpResponse {
   notes: Note[];
   totalPages: number;
 }
-
 export interface RegisterRequest {
   email: string;
   password: string;
