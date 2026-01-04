@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import type { Note, NewNoteData } from "../../types/note"; 
+import type { Note } from "../../types/note"; 
 import type { User } from "../../types/user"; 
 import { nextServer as axiosInstance } from "./api"; 
 
@@ -19,7 +19,6 @@ export const getMe = async (): Promise<User | null> => {
   try {
     const cookieStore = await cookies();
     const allCookies = cookieStore.toString();
-
     if (!allCookies) return null; 
 
     const { data } = await axiosInstance.get<User>("/auth/session", {
@@ -31,12 +30,10 @@ export const getMe = async (): Promise<User | null> => {
   }
 };
 
-
 export async function fetchNotes(params: FetchNotesParams): Promise<NotesHttpResponse> {
   try {
     const cookieStore = await cookies();
     const allCookies = cookieStore.toString();
-
     if (!allCookies) return { notes: [], totalPages: 0 };
 
     const res = await axiosInstance.get<NotesHttpResponse>("/notes", {
@@ -53,7 +50,6 @@ export const fetchNoteById = async (id: string): Promise<Note | null> => {
   try {
     const cookieStore = await cookies();
     const allCookies = cookieStore.toString();
-    
     if (!allCookies) return null;
 
     const response = await axiosInstance.get<Note>(`/notes/${id}`, {

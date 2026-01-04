@@ -22,6 +22,7 @@ export type LoginRequest = {
   password: string;
 };
 
+
 export const register = async (data: RegisterRequest): Promise<User> => {
   const res = await nextServer.post<User>("/auth/register", data);
   return res.data;
@@ -45,9 +46,15 @@ export const checkSession = async (): Promise<User | null> => {
   }
 };
 
+
 export const getMe = async (): Promise<User> => {
-  const { data } = await nextServer.get<User>("/users/me");
-  return data;
+  try {
+    const { data } = await nextServer.get<User>("/users/me");
+    return data;
+  } catch (error) {
+    
+    throw new Error("Failed to fetch user data");
+  }
 };
 
 export const updateMe = async ({
@@ -60,6 +67,8 @@ export const updateMe = async ({
   const res = await nextServer.patch<User>("/users/me", { username, email });
   return res.data;
 };
+
+
 
 export const fetchNotes = async (
   search: string,

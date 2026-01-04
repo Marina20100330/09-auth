@@ -70,7 +70,8 @@ export default async function Profile() {
           />
         </div>
         <div className={css.profileInfo}>
-          <p>Username: {user.username || user.email.split("@")[0]}</p>
+          {}
+          <p>Username: {user.username || (user.email ? user.email.split("@")[0] : "User")}</p>
           <p>Email: {user.email}</p>
         </div>
       </div>
