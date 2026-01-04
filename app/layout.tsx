@@ -8,7 +8,7 @@ import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
 import AuthProvider from "@/components/AuthProvider/AuthProvider";
 
 const roboto = Roboto({
-  subsets: ["latin"],
+  subsets: ["latin", "cyrillic"], 
   weight: ["400", "700"],
   variable: "--font-roboto",
   display: "swap",
@@ -22,7 +22,8 @@ export const metadata: Metadata = {
     title: "Welcome to NoteHub",
     description:
       "Quickly organize and access your personal notes anytime, anywhere.",
-    url: "https://09-auth-mu-nine.vercel.app/",
+    // ОБНОВИЛ URL
+    url: "https://09-auth-brown-eight.vercel.app/",
     images: [
       {
         url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
@@ -43,7 +44,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={roboto.variable}>
+      {/* ИСПРАВЛЕНО: roboto.className применит шрифт ко всем элементам */}
+      <body className={roboto.className}>
         <TanStackProvider>
           <AuthProvider>
             <Header />

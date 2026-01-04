@@ -20,7 +20,7 @@ export default function Header() {
 
           {}
           <li>
-            <Link href="/notes/filter/all" className={css.navigationLink}>Notes</Link>
+            <Link href="/notes/filter/All" className={css.navigationLink}>Notes</Link>
           </li>
 
           {}
