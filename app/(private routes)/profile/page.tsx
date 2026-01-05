@@ -36,11 +36,13 @@ export default async function Profile() {
     error = "Failed to load user profile. Please try again or log in.";
   }
 
+
   if (error || !user) {
     return (
       <main className={css.mainContent}>
         <div className={css.profileCard}>
           <h1 className={css.formTitle}>Profile Page</h1>
+          {}
           <p className={css.error}>{error || "User not found. Please log in."}</p>
           <Link href="/sign-in" className={css.editProfileButton}>
             Go to Login
@@ -70,7 +72,6 @@ export default async function Profile() {
           />
         </div>
         <div className={css.profileInfo}>
-          {}
           <p>Username: {user.username || (user.email ? user.email.split("@")[0] : "User")}</p>
           <p>Email: {user.email}</p>
         </div>

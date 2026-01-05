@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const isServer = typeof window === "undefined";
+const baseURL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
 export const nextServer = axios.create({
-  baseURL: isServer ? "https://notehub-api.goit.study" : "/api",
+  baseURL,
   withCredentials: true,
 });
 

@@ -2,6 +2,7 @@ import axios from "axios";
 import type { User } from "@/types/user"; 
 import type { NewNoteData, Note } from "@/types/note";
 
+
 export const nextServer = axios.create({ 
   baseURL: "/api",
   withCredentials: true, 
@@ -46,25 +47,20 @@ export const checkSession = async (): Promise<User | null> => {
   }
 };
 
+// --- USER ---
 
 export const getMe = async (): Promise<User> => {
   try {
     const { data } = await nextServer.get<User>("/users/me");
     return data;
   } catch (error) {
-    
     throw new Error("Failed to fetch user data");
   }
 };
 
-export const updateMe = async ({
-  username,
-  email,
-}: {
-  username: string;
-  email: string;
-}) => {
-  const res = await nextServer.patch<User>("/users/me", { username, email });
+
+export const updateMe = async ({ username }: { username: string }) => {
+  const res = await nextServer.patch<User>("/users/me", { username });
   return res.data;
 };
 
@@ -98,6 +94,7 @@ export const deleteNote = async (id: string): Promise<Note> => {
 };
 
 export const fetchNoteById = async (id: string): Promise<Note> => {
+
   const response = await nextServer.get<Note>(`/notes/${id}`);
   return response.data;
 };

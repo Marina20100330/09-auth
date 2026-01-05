@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import type { Note } from "../../types/note"; 
 import type { User } from "../../types/user"; 
 import { nextServer as axiosInstance } from "./api"; 
+import { AxiosResponse } from "axios";
 
 export interface NotesHttpResponse {
   notes: Note[];
@@ -15,19 +16,29 @@ export interface FetchNotesParams {
   perPage?: number;
 }
 
+
 export const getMe = async (): Promise<User | null> => {
   try {
     const cookieStore = await cookies();
     const allCookies = cookieStore.toString();
     if (!allCookies) return null; 
 
-    const { data } = await axiosInstance.get<User>("/auth/session", {
+    const { data } = await axiosInstance.get<User>("/users/me", {
       headers: { Cookie: allCookies },
     });
     return data;
   } catch (error) {
     return null; 
   }
+};
+
+export const checkSession = async (): Promise<AxiosResponse<User>> => {
+  const cookieStore = await cookies();
+  const allCookies = cookieStore.toString();
+  
+  return axiosInstance.get<User>("/auth/session", {
+    headers: { Cookie: allCookies },
+  });
 };
 
 export async function fetchNotes(params: FetchNotesParams): Promise<NotesHttpResponse> {
